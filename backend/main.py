@@ -13,10 +13,14 @@ db = SQLAlchemy(app)
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150))
+    image = db.Column(db.String(150))
     url = db.Column(db.String(150))
     web = db.Column(db.String(20))
 
     def __init__(self, url):
+        self.name = "PLACEHOLDER"
+        self.image = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/681px-Placeholder_view_vector.svg.png"
         self.url = url
         self.web = urlparse(url).netloc
 
@@ -54,6 +58,8 @@ def get_products():
     for product in products:
         product_data = {}
         product_data['id'] = product.id
+        product_data['name'] = product.name
+        product_data['image'] = product.image
         product_data['url'] = product.url
         product_data['web'] = product.web
         output.append(product_data)
@@ -68,15 +74,19 @@ def add_price_history():
     db.session.commit()
     return jsonify({'message': 'Price history added successfully'})
 
-#TODO: Update or add images and names to products
 @app.route('/add-price-history', methods=['POST'])
 def add_price_history_array():
-    price_history = request.json
-    for price in price_history:
-        product_id = price['product_id']
-        price = price['price']
-        price_history = PriceHistory(product_id, price)
-        db.session.add(price_history)
+    new_data = request.json
+    for data in new_data:
+        product_id = data['product_id']
+        # update products with name and image
+        product = Product.query.filter_by(id=product_id).first()
+        product.name = data['name']
+        product.image = data['image']
+        # add to price history
+        price = data['price']
+        new_price = PriceHistory(product_id, price)
+        db.session.add(new_price)
     db.session.commit()
     return jsonify({'message': 'Price history added successfully'})
 
