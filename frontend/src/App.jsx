@@ -1,39 +1,58 @@
-import React, { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '../public/vite.svg';
+import React, { useEffect, useState } from 'react';
+import addProduct from './services/addProduct';
+import getProducts from './services/getProducts';
+import resolve from './util/webResolver';
+
 import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [product, setProduct] = useState('');
+  const [trackedProducts, setTrackedProducts] = useState([]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const result = addProduct({ url: product });
+    console.log(result);
+  };
+
+  useEffect(() => {
+    getProducts(setTrackedProducts);
+  }, []);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button type="submit" onClick={() => setCount((counter) => counter + 1)}>
-          count is
-          {' '}
-          {count}
+      <div className="top-nav">
+        <input
+          className="product-input"
+          onChange={(e) => {
+            setProduct(e.target.value);
+          }}
+        />
+        <button
+          type="submit"
+          onClick={(e) => {
+            handleSubmit(e);
+          }}
+        >
+          Add Product
         </button>
-        <p>
-          Edit
-          {' '}
-          <code>src/App.jsx</code>
-          {' '}
-          and save to test HMR
-        </p>
+
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div className="tracked-products">
+        {trackedProducts.map((item) => (
+          <div className="product-card">
+            <div className="product-details">
+              <div className="product-web">{`${resolve(item.web)} Price History`}</div>
+              <div className="product-name">
+                <a href={item.url}>{item.name}</a>
+              </div>
+            </div>
+            <div className="product-image">
+              <img src={item.image} alt="product-img" />
+            </div>
+          </div>
+        ))}
+
+      </div>
     </>
   );
 }

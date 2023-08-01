@@ -40,7 +40,9 @@ def home():
 
 @app.route('/add-product', methods=['POST'])
 def add_product():
+    # TODO: Should validate if URL is valid and domain is supported
     url = request.json['url']
+    print(url)
     product = Product.query.filter_by(url=url).first()
     if product is None:
         product = Product(url)
