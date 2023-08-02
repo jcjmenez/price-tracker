@@ -25,10 +25,13 @@ async def get_bodytone_detail(context, url):
     await page.goto(url)
     product = {}
     name_element = await page.query_selector('.product_title')
-    price_element = await page.query_selector('.woocommerce-Price-amount')
+    price_element = await page.query_selector('.price')
+    price_ins = await price_element.query_selector('ins')
     image_element = await page.query_selector('.wp-post-image')
-    #inside price_element there is a bdi selector with the price
-    price_bdi = await price_element.query_selector('bdi')
+    if price_ins:
+        price_bdi = await price_ins.query_selector('bdi')
+    else:
+        price_bdi = await price_element.query_selector('bdi')
     price = await price_bdi.inner_text()
     price = price.replace("€", "").replace(",", ".").replace("\xa0", "")
     product["name"] = await name_element.inner_text()
@@ -69,5 +72,5 @@ async def main(products):
 
 if __name__ == "__main__":
     #urls = ["https://www.amazon.es/Logitech-Wireless-programables-Prolongada-Compatible/dp/B07G5XJLWK", "https://www.amazon.es/Logitech-Pro-Gaming-Headset-Black/dp/B07TQ6G276"]
-    urls = ["https://www.bodytone.eu/total-fit-bench/", "https://www.bodytone.eu/cinta-curva-plegable-home-tapiz-40x120/", "https://www.bodytone.eu/bicicleta-estatica-inxide-by-bodytone-xu02/", "https://www.bodytone.eu/bicicleta-spinning-bluetooth-ds60/"]
+    urls = ["https://www.bodytone.eu/bicicleta-spinning-bluetooth-ds60/", "https://www.bodytone.eu/bicicleta-spinning-ds06"]
     asyncio.run(main(urls))
