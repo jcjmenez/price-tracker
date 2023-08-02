@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from urllib.parse import urlparse
 from datetime import datetime
 import scraper.main as Scraper
+import re
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -34,23 +35,45 @@ class PriceHistory(db.Model):
         self.product_id = product_id
         self.price = price
 
+def validate_url(url):
+    Webs = {"AMAZON": "www.amazon", "BODYTONE": 'www.bodytone.eu'}
+    try:
+        regex = r''
+        if Webs['AMAZON'] in url:
+            regex = r'^(?:https?://)?(www[^/]+).*?(/[dg]p/[^/]+)'
+
+        if Webs['BODYTONE'] in url:
+            regex = r'^(?:https?://)?(www[^/]+).*?(/[^/]+)'
+        
+        if regex == r'':
+            print("Not supported URL")
+        else:
+            match = re.search(regex, url)
+            return match.group(0)
+    except:
+        print("Not valid URL")
+    return None
+
 @app.route('/')
 def home():
     return "Hello, World!"
 
 @app.route('/add-product', methods=['POST'])
 def add_product():
-    # TODO: Should validate if URL is valid and domain is supported
     url = request.json['url']
     print(url)
-    product = Product.query.filter_by(url=url).first()
-    if product is None:
-        product = Product(url)
-        db.session.add(product)
-        db.session.commit()
-        return jsonify({'message': 'Product added successfully'})
+    url = validate_url(url)
+    if url:
+        product = Product.query.filter_by(url=url).first()
+        if product is None:
+            product = Product(url)
+            db.session.add(product)
+            db.session.commit()
+            return jsonify({'message': 'Product added successfully'})
+        else:
+            return jsonify({'message': 'Product already exists'})
     else:
-        return jsonify({'message': 'Product already exists'})
+        return jsonify({'message': 'URL provided is not valid or supported'})
 
 
 @app.route('/get-products', methods=['GET'])
@@ -93,8 +116,21 @@ def add_price_history_array():
     return jsonify({'message': 'Price history added successfully'})
 
 @app.route('/get-price-history/<product_id>', methods=['GET'])
-def get_price_history(product_id):
+def get_product_price_history(product_id):
     price_history = PriceHistory.query.filter_by(product_id=product_id).all()
+    output = []
+    for price in price_history:
+        price_data = {}
+        price_data['id'] = price.id
+        price_data['product_id'] = price.product_id
+        price_data['price'] = price.price
+        price_data['date'] = price.date
+        output.append(price_data)
+    return jsonify({'price_history': output})
+
+@app.route('/get-price-history', methods=['GET'])
+def get_all_price_history():
+    price_history = PriceHistory.query.all()
     output = []
     for price in price_history:
         price_data = {}

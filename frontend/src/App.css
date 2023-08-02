@@ -1,1 +1,13 @@
+.product-view {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 1rem;
+}
 
+.preview-img {
+	height: auto;
+	width: auto;
+	max-width: 160px;
+	max-height: 160px;
+}

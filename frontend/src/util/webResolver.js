@@ -1,8 +1,11 @@
-const resolve = (web) => {
+const resolveWeb = (web) => {
   if (web.includes('www.amazon', 0)) {
     return 'Amazon';
   }
-  return 'Unknown';
+  if (web.includes('www.bodytone.eu', 0)) {
+    return 'Bodytone';
+  }
+  return 'Unknown Web';
 };
 
-export default resolve;
+export default resolveWeb;
