@@ -1,6 +1,8 @@
+import { API_URL } from '../util/const';
+
 const getPriceHistory = async (setPriceHistory) => {
   try {
-    const response = await fetch('http://127.0.0.1:5000/get-price-history', {
+    const response = await fetch(`${API_URL}/get-price-history`, {
       method: 'GET',
       mode: 'cors',
       headers: {

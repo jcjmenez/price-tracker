@@ -1,6 +1,8 @@
+import { API_URL } from '../util/const';
+
 const addProduct = async (data) => {
   try {
-    const response = await fetch('http://127.0.0.1:5000/add-product', {
+    const response = await fetch(`${API_URL}/add-product`, {
       method: 'POST',
       mode: 'cors',
       headers: {
