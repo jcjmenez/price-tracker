@@ -2,9 +2,13 @@
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	gap: 1rem;
+	gap: 5rem;
+	flex-wrap: wrap;
 }
 
+.image-wrapper {
+	width: 160px;
+}
 .preview-img {
 	height: auto;
 	width: auto;

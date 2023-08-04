@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import addProduct from '../services/addProduct';
 import getProducts from '../services/getProducts';
-import getPriceHistory from '../services/getPriceHistory';
 import './MainPage.css';
 import ProductCard from '../components/ProductCard';
 
 function MainPage() {
   const [product, setProduct] = useState('');
   const [trackedProducts, setTrackedProducts] = useState([]);
-  const [priceHistory, setPriceHistory] = useState([]);
 
   useEffect(() => {
     getProducts(setTrackedProducts);
   }, []);
-
-  useEffect(() => {
-    getPriceHistory(setPriceHistory);
-    console.log(priceHistory);
-  }, [trackedProducts]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -54,7 +47,6 @@ function MainPage() {
             name={item.name}
             web={item.web}
             image={item.image}
-            priceHistory={priceHistory}
             key={item.id}
           />
         ))}
