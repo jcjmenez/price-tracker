@@ -13,7 +13,6 @@ function ProductCard({
   }, []);
 
   useEffect(() => {
-    console.log(productPriceHistory);
   }, [productPriceHistory]);
   return (
     <div className="product-card" key={id}>

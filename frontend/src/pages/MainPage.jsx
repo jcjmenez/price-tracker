@@ -14,8 +14,7 @@ function MainPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const result = addProduct({ url: product });
-    console.log(result);
+    addProduct({ url: product });
   };
 
   return (
