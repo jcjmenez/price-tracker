@@ -36,7 +36,7 @@ class PriceHistory(db.Model):
         self.price = price
 
 def validate_url(url):
-    Webs = {"AMAZON": "www.amazon", "BODYTONE": 'www.bodytone.eu'}
+    Webs = {"AMAZON": "www.amazon", "BODYTONE": 'www.bodytone.eu', "BACKMARKET": "www.backmarket"}
     try:
         regex = r''
         if Webs['AMAZON'] in url:
@@ -45,6 +45,8 @@ def validate_url(url):
         if Webs['BODYTONE'] in url:
             regex = r'^(?:https?://)?(www[^/]+).*?(/[^/]+)'
         
+        if Webs['BACKMARKET'] in url:
+            regex = r'^.*?(?=#|$)'
         if regex == r'':
             print("Not supported URL")
         else:
@@ -150,7 +152,6 @@ async def refresh():
     await Scraper.main(products)
 
     return jsonify({'products': products_url})
-
 
 if __name__ == '__main__':
     with app.app_context():

@@ -2,8 +2,11 @@ import asyncio
 from playwright.async_api import async_playwright
 import requests
 
-Webs = {"AMAZON": "www.amazon", "BODYTONE": 'www.bodytone.eu'}
+Webs = {"AMAZON": "www.amazon", "BODYTONE": 'www.bodytone.eu', "BACKMARKET": "www.backmarket.es"}
 
+
+def clean_price(price):
+    return price.replace("€", "").replace(",", ".").replace("\xa0", "").strip()
 
 async def get_amazon_detail(context, url):
     page = await context.new_page()
@@ -14,7 +17,7 @@ async def get_amazon_detail(context, url):
     name_element = await page.query_selector('#productTitle')
     product["name"] = await name_element.inner_text()    
     price = await price_element.inner_text()
-    price = price.replace("€", "").replace(",", ".")
+    price = clean_price(price)
     product["price"] = price
     product["image"] = await image_element.get_attribute('src')
     page.close
@@ -33,12 +36,39 @@ async def get_bodytone_detail(context, url):
     else:
         price_bdi = await price_element.query_selector('bdi')
     price = await price_bdi.inner_text()
-    price = price.replace("€", "").replace(",", ".").replace("\xa0", "")
+    price = clean_price(price)
     product["name"] = await name_element.inner_text()
     product["price"] = price
     product["image"] = await image_element.get_attribute('src')
     page.close
     return product
+
+async def get_backmarket_detail(context, url):
+    page = await context.new_page()
+    await page.goto(url)
+    product = {}
+    name_element = await page.query_selector('.title-1')
+    price_element = await page.query_selector('.max-h-6')
+    image_elements = await page.query_selector_all('img')
+    image = ""
+    for img in image_elements:
+        x = await img.get_attribute('src')
+        if "product_images/" in x:
+            image = x
+            break
+    
+    name = await name_element.inner_text()
+    name = name.replace("\n", "")
+    name = name.strip()
+    product["name"] = name
+    price = await price_element.inner_text()
+    price = clean_price(price)
+    product["price"] = price
+    image = "https"+image.split("https")[1]
+    product["image"] = image
+    page.close
+    return product
+
 
 async def open_new_pages(context, urls):
     results = []
@@ -49,6 +79,9 @@ async def open_new_pages(context, urls):
                 results.append(result)
             if Webs["BODYTONE"] in url:
                 result = await group.create_task(get_bodytone_detail(context, url))
+                results.append(result)
+            if Webs["BACKMARKET"] in url:
+                result = await group.create_task(get_backmarket_detail(context, url))
                 results.append(result)
     return results
 
@@ -72,5 +105,6 @@ async def main(products):
 
 if __name__ == "__main__":
     #urls = ["https://www.amazon.es/Logitech-Wireless-programables-Prolongada-Compatible/dp/B07G5XJLWK", "https://www.amazon.es/Logitech-Pro-Gaming-Headset-Black/dp/B07TQ6G276"]
-    urls = ["https://www.bodytone.eu/bicicleta-spinning-bluetooth-ds60/", "https://www.bodytone.eu/bicicleta-spinning-ds06"]
+
+    urls = ["https://www.backmarket.es/es-es/p/iphone-12-128-gb-negro-libre/f494a8a4-ef58-4a1c-9495-a64d21fed02f#l=10", "https://www.backmarket.es/es-es/p/airpods-pro-con-estuche-de-carga-magsafe-blanco/0900e1dc-f9c4-4646-b62e-43bc66335110#l=10", "https://www.backmarket.es/es-es/p/macbook-pro-13-retina-2017-core-i7-25-ghz-ssd-512-gb-16gb-teclado-espanol/59c8646b-f2c7-40b1-901f-a9376d00bb2e#l=12"]
     asyncio.run(main(urls))
