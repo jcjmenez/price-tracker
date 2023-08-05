@@ -3,9 +3,9 @@ import {
   LineChart, XAxis, YAxis, CartesianGrid, Line, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import resolveCurrency from '../util/currencyResolver';
-import './PriceHistory.css';
+import './PriceHistoryChart.css';
 
-function PriceHistory({
+function PriceHistoryChart({
   history, web,
 }) {
   return (
@@ -24,4 +24,4 @@ function PriceHistory({
   );
 }
 
-export default PriceHistory;
+export default PriceHistoryChart;

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import PriceHistory from './PriceHistory';
+import PriceHistoryChart from './PriceHistoryChart';
 import resolveWeb from '../util/webResolver';
 import getProductPriceHistory from '../services/getProductPriceHistory';
 import './ProductCard.css';
+import PriceHistoryTable from './PriceHistoryTable';
 
 function ProductCard({
   id, url, name, web, image,
@@ -26,7 +27,11 @@ function ProductCard({
         <div className="image-wrapper">
           <img src={image} alt="product-img" className="preview-img" />
         </div>
-        <PriceHistory
+        <PriceHistoryTable
+          history={productPriceHistory}
+          web={web}
+        />
+        <PriceHistoryChart
           history={productPriceHistory}
           web={web}
         />
