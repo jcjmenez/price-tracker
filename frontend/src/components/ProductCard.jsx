@@ -11,26 +11,26 @@ function ProductCard({
 }) {
   const [productPriceHistory, setProductPriceHistory] = useState([]);
   const [dateRange, setDateRange] = useState(5);
-  const [dateRangeHistory, setDateRangeHistory] = useState([]);
+  const [productDateRangeHistory, setProductDateRangeHistory] = useState([]);
 
   useEffect(() => {
     getProductPriceHistory(id, setProductPriceHistory);
   }, []);
 
   useEffect(() => {
-    setDateRangeHistory(productPriceHistory);
+    setProductDateRangeHistory(productPriceHistory);
   }, [productPriceHistory]);
 
   useEffect(() => {
-    setDateRangeHistory(productPriceHistory);
+    setProductDateRangeHistory(productPriceHistory);
     if (dateRange === 0) return;
-    const historyWithRange = dateRangeHistory.filter((item) => {
+    const historyWithRange = productDateRangeHistory.filter((item) => {
       const date = new Date(item.date);
       const today = new Date();
       const range = new Date(today.setMonth(today.getMonth() - dateRange));
       return date > range;
     });
-    setDateRangeHistory(historyWithRange);
+    setProductDateRangeHistory(historyWithRange);
   }, [dateRange]);
   return (
     <div className="product-card" key={id}>
@@ -45,11 +45,11 @@ function ProductCard({
           <img src={image} alt="product-img" className="preview-img" />
         </div>
         <PriceHistoryTable
-          history={dateRangeHistory}
+          history={productDateRangeHistory}
           web={web}
         />
         <PriceHistoryChart
-          history={dateRangeHistory}
+          history={productDateRangeHistory}
           web={web}
         />
         <DateSlider setDateRange={setDateRange} />
