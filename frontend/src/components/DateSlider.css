@@ -1,0 +1,9 @@
+.date-range {
+	height: 100%;
+	margin-bottom: 40%;
+}
+
+.date-range-indicator {
+	display: flex;
+	justify-content: space-between;
+}
