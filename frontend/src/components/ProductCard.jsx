@@ -24,10 +24,10 @@ function ProductCard({
   useEffect(() => {
     setProductDateRangeHistory(productPriceHistory);
     if (dateRange === 0) return;
+    const today = new Date();
+    const range = new Date(today.setMonth(today.getMonth() - dateRange));
     const historyWithRange = productDateRangeHistory.filter((item) => {
       const date = new Date(item.date);
-      const today = new Date();
-      const range = new Date(today.setMonth(today.getMonth() - dateRange));
       return date > range;
     });
     setProductDateRangeHistory(historyWithRange);
