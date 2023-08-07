@@ -36,7 +36,7 @@ class PriceHistory(db.Model):
         self.price = price
 
 def validate_url(url):
-    Webs = {"AMAZON": "www.amazon", "BODYTONE": 'www.bodytone.eu', "BACKMARKET": "www.backmarket"}
+    Webs = {"AMAZON": "www.amazon", "BODYTONE": 'www.bodytone.eu', "BACKMARKET": "www.backmarket", "CARREFOUR": "www.carrefour.es"}
     try:
         regex = r''
         if Webs['AMAZON'] in url:
@@ -47,6 +47,9 @@ def validate_url(url):
         
         if Webs['BACKMARKET'] in url:
             regex = r'^.*?(?=#|$)'
+        # No referrers in carrefour
+        if Webs['CARREFOUR'] in url:
+            regex =  r'.*'
         if regex == r'':
             print("Not supported URL")
         else:
