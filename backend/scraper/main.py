@@ -148,6 +148,7 @@ async def main(products):
         context = await browser.new_context()
         results = await open_new_pages(context, products_url)
         print(results)
+        await browser.close()
 
     for product in results:
         product["product_id"] = products_id[results.index(product)]
@@ -160,10 +161,12 @@ async def test_main(products):
     results = []
     async with async_playwright() as playwright:
         chromium = playwright.chromium
-        browser = await chromium.launch(headless=False)
+        #browser = await chromium.launch(headless=False)
+        browser = await chromium.launch()
         context = await browser.new_context()
         results = await open_new_pages(context, products)
         print(results)
+        await browser.close()
 
     return results
 
