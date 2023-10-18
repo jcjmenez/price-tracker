@@ -15,7 +15,7 @@ function MainPage() {
     <>
       <ProductInput />
       <div className="tracked-products">
-        {trackedProducts.map((item) => (
+        {trackedProducts.length > 0 ? trackedProducts.map((item) => (
           <ProductCard
             id={item.id}
             url={item.url}
@@ -24,7 +24,7 @@ function MainPage() {
             image={item.image}
             key={item.id}
           />
-        ))}
+        )) : 'No tracked products'}
 
       </div>
     </>

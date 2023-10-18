@@ -146,7 +146,6 @@ def get_all_price_history():
         output.append(price_data)
     return jsonify({'price_history': output})
 
-
 @app.route('/delete-product/<product_id>', methods=['DELETE'])
 def delete_product(product_id):
     product = Product.query.filter_by(id=product_id).first()
